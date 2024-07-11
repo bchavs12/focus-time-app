@@ -1,9 +1,12 @@
+import { Button } from "./components/fragments/Button";
+
 export function App() {
   return (
-    <div>
-      <h1>
-        Hello Timer
-      </h1>
-    </div>
-  )
+    <>
+      <Button variant="primary" />
+      <Button variant="secondary" />
+      <Button variant="success" />
+      <Button variant="danger" />
+    </>
+  );
 }
