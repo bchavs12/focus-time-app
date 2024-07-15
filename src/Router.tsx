@@ -8,7 +8,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<DefaultLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/history" element={<Historic />} />
+        <Route path="/historic" element={<Historic />} />
       </Route>
     </Routes>
   );
