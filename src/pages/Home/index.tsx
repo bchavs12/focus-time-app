@@ -1,24 +1,28 @@
 import { Play } from "phosphor-react";
-import {
-  CountdownContent,
-  Separator,
-  FormContent,
-  HomeContainer,
-  StartCountdownButton,
-  TaskInput,
-  SetMinutesInput,
-} from "./styles";
+import { useForm } from "react-hook-form";
+
+import * as component from "./styles";
 
 export function Home() {
+  const { register, handleSubmit, watch } = useForm();
+
+  function handleCreateNewCycle(data: any) {
+    console.log(data);
+  }
+
+  const task = watch("task");
+  const isSubmitDisable = !task;
+
   return (
-    <HomeContainer>
-      <form action="">
-        <FormContent>
+    <component.HomeContainer>
+      <form onSubmit={handleSubmit(handleCreateNewCycle)}>
+        <component.FormContent>
           <label htmlFor="task">Irei focar em</label>
-          <TaskInput
+          <component.TaskInput
             id="task"
             list="task-suggestion"
             placeholder="Dê um nome para sua atividade"
+            {...register("task")}
           />
 
           <datalist id="task-suggestion">
@@ -28,31 +32,35 @@ export function Home() {
           </datalist>
 
           <label htmlFor="minutesAmount">durante</label>
-          <SetMinutesInput
+          <component.SetMinutesInput
             type="number"
             id="minutesAmount"
-            placeholder="00"
             step={5}
             min={5}
             max={60}
+            placeholder="05"
+            {...register("minutesAmount", { valueAsNumber: true })}
           />
 
           <span>minutos.</span>
-        </FormContent>
+        </component.FormContent>
 
-        <CountdownContent>
+        <component.CountdownContent>
           <span>0</span>
           <span>0</span>
-          <Separator>:</Separator>
+          <component.Separator>:</component.Separator>
           <span>0</span>
           <span>0</span>
-        </CountdownContent>
+        </component.CountdownContent>
 
-        <StartCountdownButton type="submit">
+        <component.StartCountdownButton
+          type="submit"
+          disabled={isSubmitDisable}
+        >
           <Play size={24} />
           Comecar
-        </StartCountdownButton>
+        </component.StartCountdownButton>
       </form>
-    </HomeContainer>
+    </component.HomeContainer>
   );
 }

@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const HistoricContainer = styled.main`
   flex: 1;
-  padding: 3.5rem;
+  padding: 0 3.5rem;
+  overflow-x: auto;
 
   display: flex;
   flex-direction: column;
@@ -24,6 +25,8 @@ export const HistoricList = styled.div`
     min-width: 600px;
 
     th {
+      position: sticky;
+      top: 0;
       background-color: ${(props) => props.theme["gray-600"]};
       padding: 1rem;
       text-align: left;
@@ -32,12 +35,12 @@ export const HistoricList = styled.div`
       line-height: 1.6;
 
       &:first-child {
-        border-top-left-radius: 8px;
+        border-top-left-radius: 5px;
         padding-left: 1.5rem;
       }
 
       &:last-child {
-        border-top-right-radius: 8px;
+        border-top-right-radius: 5px;
         padding-right: 1.5rem;
       }
     }
@@ -70,7 +73,7 @@ const STATUS_COLORS = {
 interface StatusProps {
   statusColor: keyof typeof STATUS_COLORS;
 }
-// Pesquisar sobre props em components StyledComponents
+
 export const Status = styled.span<StatusProps>`
   display: flex;
   align-items: center;
