@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Play } from "phosphor-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import * as zod from "zod";
 
-import * as component from "./styles";
+import { CountdownContent, FormContent, HomeContainer, Separator, SetMinutesInput, StartCountdownButton, TaskInput } from "./styles";
 
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, "Informe a tarefa"),
@@ -15,7 +18,16 @@ const newCycleFormValidationSchema = zod.object({
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>;
 
+interface Cycle {
+  id: string
+  task: string
+  minutesAmount: number
+}
+
 export function Home() {
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
@@ -25,22 +37,32 @@ export function Home() {
   });
 
   function handleCreateNewCycle(data: NewCycleFormData) {
-    console.log(data);
+    const id = String(new Date().getTime())
 
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+    }
+
+    setCycles((state: any) => [...state, newCycle])
+    setActiveCycleId(id);
     reset();
   }
 
-  // Ler documentação da api react-hook-form e oque cada metodo que estamos usando faz
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  console.log(activeCycle);
 
   const task = watch("task");
   const isSubmitDisable = !task;
 
   return (
-    <component.HomeContainer>
+    <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)}>
-        <component.FormContent>
+        <FormContent>
           <label htmlFor="task">Irei focar em</label>
-          <component.TaskInput
+          <TaskInput
             id="task"
             list="task-suggestion"
             placeholder="Dê um nome para sua atividade"
@@ -54,7 +76,7 @@ export function Home() {
           </datalist>
 
           <label htmlFor="minutesAmount">durante</label>
-          <component.SetMinutesInput
+          <SetMinutesInput
             type="number"
             id="minutesAmount"
             step={5}
@@ -65,24 +87,25 @@ export function Home() {
           />
 
           <span>minutos.</span>
-        </component.FormContent>
+        </FormContent>
 
-        <component.CountdownContent>
+        <CountdownContent>
           <span>0</span>
           <span>0</span>
-          <component.Separator>:</component.Separator>
+          <Separator>:</Separator>
           <span>0</span>
           <span>0</span>
-        </component.CountdownContent>
+        </CountdownContent>
 
-        <component.StartCountdownButton
+        <StartCountdownButton
           type="submit"
           disabled={isSubmitDisable}
         >
           <Play size={24} />
           Comecar
-        </component.StartCountdownButton>
+        </StartCountdownButton>
       </form>
-    </component.HomeContainer>
+    </HomeContainer>
   );
 }
+
