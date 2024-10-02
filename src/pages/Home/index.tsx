@@ -3,7 +3,8 @@
 import { Play } from "phosphor-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { differenceInSeconds } from "date-fns";
 import * as zod from "zod";
 
 import { CountdownContent, FormContent, HomeContainer, Separator, SetMinutesInput, StartCountdownButton, TaskInput } from "./styles";
@@ -22,6 +23,7 @@ interface Cycle {
   id: string
   task: string
   minutesAmount: number
+  startDate: Date
 }
 
 export function Home() {
@@ -37,6 +39,18 @@ export function Home() {
     },
   });
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  useEffect(() => {
+    if (activeCycle) {
+      setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate)
+        )
+      }, 1000)
+    }
+  }, [activeCycle])
+
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime())
 
@@ -44,6 +58,7 @@ export function Home() {
       id,
       task: data.task,
       minutesAmount: data.minutesAmount,
+      startDate: new Date()
     }
 
     setCycles((state: any) => [...state, newCycle])
@@ -51,16 +66,13 @@ export function Home() {
     reset();
   }
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0 //e.g: 5*60 -> 300
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
   const secondsAmount = currentSeconds % 60
 
-  // problema: quando minutes chegar abaixo de 10 -> 9 então
-  const minutes = String(minutesAmount).padStart(2, '0') // @2 -> se não tiver 2 caracteres preencha com '0'
+  const minutes = String(minutesAmount).padStart(2, '0')
   const seconds = String(secondsAmount).padStart(2, '0')
 
   const task = watch("task");
